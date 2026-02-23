@@ -1,1 +1,1 @@
-# This is the main branch version
+# This is the conflict-branch version
