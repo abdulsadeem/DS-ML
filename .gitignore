@@ -8,8 +8,10 @@ __pycache__/
 ~$*.docx
 
 # Generated reports
-reports/*.docx
+# Ignore all generated report files
 reports/*.png
+reports/*.docx
+reports/~$*.docx
 
 # OS files
 .DS_Store
