@@ -1,0 +1,16 @@
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Python cache
+__pycache__/
+
+# Word temp files
+~$*.docx
+
+# Generated reports
+reports/*.docx
+reports/*.png
+
+# OS files
+.DS_Store
+Thumbs.db
