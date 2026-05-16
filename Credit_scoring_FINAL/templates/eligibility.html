@@ -1,0 +1,537 @@
+{% extends "base.html" %}
+
+{% block body_class %}{{ loan_type }}-theme{% endblock %}
+
+{% block title %}{{ loan_type.title() }} Loan Eligibility Check | Smart Lending{% endblock %}
+
+{% block content %}
+<section class="panel panel-glow">
+    <div class="panel-heading">
+        <h1>Check Your {{ loan_type.title() }} Loan Eligibility</h1>
+        <p>Fill in your details to get an instant eligibility assessment based on CIBIL score and EMI capacity.</p>
+    </div>
+
+    <div class="eligibility-grid">
+        <div class="form-wrapper">
+            <form class="form-grid" action="{{ url_for('eligibility', type=loan_type) }}" method="post" id="eligibilityForm">
+                <input type="hidden" name="loan_type" value="{{ loan_type }}">
+                {% if errors %}
+                <div class="error-panel">
+                    <strong>⚠️ Please fix the following:</strong>
+                    <ul>
+                        {% for error in errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                <!-- Personal Information Section -->
+                <div class="form-section-title">Personal Information</div>
+                <div class="form-row">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" value="{{ name }}" placeholder="Your full name" required />
+                </div>
+                <div class="form-row">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" value="{{ email }}" placeholder="you@example.com" required />
+                </div>
+                <div class="form-row">
+                    <label for="phone">Phone Number</label>
+                    <input type="text" id="phone" name="phone" value="{{ phone }}" placeholder="+91 98765 43210" required />
+                </div>
+                <div class="form-row">
+                    <label for="occupation">Occupation</label>
+                    <input type="text" id="occupation" name="occupation" value="{{ occupation }}" placeholder="e.g. Software Engineer" required />
+                </div>
+                <div class="form-row">
+                    <label for="location">City / State</label>
+                    <input type="text" id="location" name="location" value="{{ location }}" placeholder="Bengaluru, KA" required />
+                </div>
+                <div class="form-row">
+                    <label for="age">Age</label>
+                    <input type="number" id="age" name="age" value="{{ age }}" min="18" max="75" placeholder="Enter your age" required />
+                </div>
+
+                {% if loan_type == 'education' %}
+                <!-- Parent Information Section -->
+                <div class="form-section-title">Parent/Guardian Information</div>
+                <div class="form-row">
+                    <label for="parent_name">Parent/Guardian Name</label>
+                    <input type="text" id="parent_name" name="parent_name" value="{{ parent_name }}" placeholder="Parent's full name" required />
+                </div>
+                <div class="form-row">
+                    <label for="parent_occupation">Parent/Guardian Occupation</label>
+                    <input type="text" id="parent_occupation" name="parent_occupation" value="{{ parent_occupation }}" placeholder="e.g. Teacher" required />
+                </div>
+                <div class="form-row">
+                    <label for="parent_income">Parent/Guardian Monthly Income (₹)</label>
+                    <input type="number" id="parent_income" name="parent_income" value="{{ parent_income }}" placeholder="Enter amount" min="0" step="0.01" required />
+                </div>
+                <div class="form-row">
+                    <label for="parent_cibil">Parent/Guardian CIBIL Score</label>
+                    <input type="number" id="parent_cibil" name="parent_cibil" min="300" max="900" value="{{ parent_cibil }}" placeholder="300-900" required />
+                </div>
+                <div class="form-row">
+                    <label for="education_purpose">Education Purpose</label>
+                    <select id="education_purpose" name="education_purpose" required>
+                        <option value="">-- Select Purpose --</option>
+                        <option value="tuition_fees" {% if education_purpose == 'tuition_fees' %}selected{% endif %}>Tuition Fees</option>
+                        <option value="hostel" {% if education_purpose == 'hostel' %}selected{% endif %}>Hostel Fees</option>
+                        <option value="books" {% if education_purpose == 'books' %}selected{% endif %}>Books & Study Materials</option>
+                        <option value="abroad_studies" {% if education_purpose == 'abroad_studies' %}selected{% endif %}>Abroad Studies</option>
+                    </select>
+                </div>
+                {% elif loan_type == 'vehicle' %}
+                <!-- Vehicle Information Section -->
+                <div class="form-section-title">Vehicle Information</div>
+                <div class="form-row">
+                    <label for="vehicle_price">Vehicle Price (₹)</label>
+                    <input type="number" id="vehicle_price" name="vehicle_price" value="{{ vehicle_price }}" placeholder="Enter vehicle price" min="0" step="0.01" required oninput="calculateLoan()" />
+                </div>
+                <div class="form-row">
+                    <label for="down_payment">Down Payment (₹)</label>
+                    <input type="number" id="down_payment" name="down_payment" value="{{ down_payment }}" placeholder="Enter down payment" min="0" step="0.01" required oninput="calculateLoan()" />
+                </div>
+                <div class="form-row">
+                    <label for="vehicle_type">Vehicle Type</label>
+                    <select id="vehicle_type" name="vehicle_type" required>
+                        <option value="">-- Select Type --</option>
+                        <option value="car" {% if vehicle_type == 'car' %}selected{% endif %}>Car</option>
+                        <option value="bike" {% if vehicle_type == 'bike' %}selected{% endif %}>Bike</option>
+                        <option value="scooter" {% if vehicle_type == 'scooter' %}selected{% endif %}>Scooter</option>
+                        <option value="truck" {% if vehicle_type == 'truck' %}selected{% endif %}>Truck</option>
+                    </select>
+                </div>
+                <!-- Financial Information Section -->
+                <div class="form-section-title">Financial Information</div>
+                <div class="form-row">
+                    <label for="income">Monthly Income (₹)</label>
+                    <input type="number" id="income" name="income" value="{{ income }}" placeholder="Enter amount" min="0" step="0.01" required />
+                </div>
+                <div class="form-row">
+                    <label for="cibil_score">CIBIL Score</label>
+                    <input type="number" id="cibil_score" name="cibil_score" min="300" max="900" value="{{ cibil_score }}" placeholder="300-900" required />
+                </div>
+                {% else %}
+                <!-- Financial Information Section -->
+                <div class="form-section-title">Financial Information</div>
+                <div class="form-row">
+                    <label for="income">Monthly Income (₹)</label>
+                    <input type="number" id="income" name="income" value="{{ income }}" placeholder="Enter amount" min="0" step="0.01" required />
+                </div>
+                {% endif %}
+                <div class="form-row">
+                    <label for="interest_rate">Annual Interest Rate (%)</label>
+                    <input type="number" step="0.01" id="interest_rate" name="interest_rate" value="{{ interest_rate }}" placeholder="e.g. 10" min="0" max="30" required />
+                </div>
+
+                <!-- Loan Information Section -->
+                <div class="form-section-title">Loan Information</div>
+                {% if loan_type == 'vehicle' %}
+                <div class="form-row">
+                    <label for="loan">Loan Amount (₹) <small>(Calculated as Vehicle Price - Down Payment)</small></label>
+                    <input type="number" id="loan" name="loan" value="{{ loan }}" placeholder="Auto-calculated" readonly />
+                </div>
+                {% else %}
+                <div class="form-row">
+                    <label for="loan">Loan Amount (₹)</label>
+                    <input type="number" id="loan" name="loan" value="{{ loan }}" placeholder="Enter amount" min="0" step="0.01" required />
+                </div>
+                {% endif %}
+
+                {% if loan_type not in ['education', 'vehicle'] %}
+                <!-- CIBIL Score Section -->
+                <div class="form-section-title">Credit Score</div>
+                <div class="form-row">
+                    <label for="cibil_score">CIBIL Score <span class="info-icon" onclick="showCIBILInfo()">ⓘ</span></label>
+                    <input type="number" id="cibil_score" name="cibil_score" min="300" max="900" value="{{ cibil_score }}" placeholder="300-900" required />
+                    <div class="cibil-scale">
+                        <span class="cibil-poor">Poor: 300-549</span>
+                        <span class="cibil-average">Average: 550-649</span>
+                        <span class="cibil-good">Good: 650-749</span>
+                        <span class="cibil-excellent">Excellent: 750+</span>
+                    </div>
+                </div>
+                {% endif %}
+
+                <button class="primary-button" type="submit">Check Eligibility</button>
+            </form>
+            <button type="button" id="scrollButton" class="secondary-button scroll-button" onclick="scrollToNextSection()">⇩ Scroll Down</button>
+            <button type="button" id="scrollUpButton" class="secondary-button scroll-up-button" onclick="scrollToTop()">⇧ Scroll Up</button>
+        </div>
+
+        <aside class="benefit-panel">
+            <span class="badge">Smart Assessment</span>
+            <h3>Eligibility Powered by AI</h3>
+            <p>Our intelligent system evaluates your loan application based on:</p>
+            <ul>
+                <li><strong>CIBIL Score</strong> – Your credit creditworthiness</li>
+                <li><strong>EMI Capacity</strong> – Monthly repayment affordability</li>
+                <li><strong>Risk Assessment</strong> – Data-driven approval decision</li>
+            </ul>
+            <div class="info-boxes">
+                <div class="info-box">
+                    <span class="info-icon">📊</span>
+                    <p><strong>Instant Results</strong> Get your decision in seconds</p>
+                </div>
+                <div class="info-box">
+                    <span class="info-icon">📄</span>
+                    <p><strong>PDF Report</strong> Download your eligibility report</p>
+                </div>
+                <div class="info-box">
+                    <span class="info-icon">🔒</span>
+                    <p><strong>Secure Data</strong> Your information is protected</p>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Results Section -->
+    {% if result %}
+    <div class="results-container">
+        <!-- Summary Cards -->
+        <div class="summary-cards-grid">
+            <div class="summary-card cibil-card">
+                <div class="card-icon">📊</div>
+                <div class="card-content">
+                    <div class="card-label">CIBIL Status</div>
+                    <div class="card-value">{{ cibil_score }}</div>
+                    <div class="card-category">{{ cibil_category }}</div>
+                </div>
+            </div>
+
+            <div class="summary-card emi-card">
+                <div class="card-icon">💰</div>
+                <div class="card-content">
+                    <div class="card-label">Monthly EMI</div>
+                    <div class="card-value">₹{{ "%.2f"|format(emi) }}</div>
+                    <div class="card-category">{{ emi_to_income_ratio }}% of income</div>
+                </div>
+            </div>
+
+            <div class="summary-card risk-card {% if 'Low' in risk_level %}low-risk{% elif 'High' in risk_level %}high-risk{% else %}medium-risk{% endif %}">
+                <div class="card-icon">
+                    {% if 'Low' in risk_level %}✓{% elif 'High' in risk_level %}⚠{% else %}⚡{% endif %}
+                </div>
+                <div class="card-content">
+                    <div class="card-label">Risk Level</div>
+                    <div class="card-value">{{ risk_level }}</div>
+                    <div class="card-category"></div>
+                </div>
+            </div>
+
+            <div class="summary-card approval-card {% if 'Approved' in approval_status %}approved{% elif 'Conditional' in approval_status %}conditional{% else %}rejected{% endif %}">
+                <div class="card-icon">
+                    {% if 'Approved' in approval_status %}✓{% elif 'Conditional' in approval_status %}⚠{% else %}✗{% endif %}
+                </div>
+                <div class="card-content">
+                    <div class="card-label">Approval Status</div>
+                    <div class="card-value">{{ approval_status }}</div>
+                    <div class="card-category"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CIBIL Score Meter -->
+        <div class="cibil-meter-container">
+            <h3>CIBIL Score Analysis</h3>
+            <div class="cibil-meter">
+                <div class="meter-bar">
+                    <div class="meter-fill" style="width: {{ (cibil_score|int - 300) / 6 }}%"></div>
+                </div>
+                <div class="meter-labels">
+                    <span>300</span>
+                    <span>450</span>
+                    <span>600</span>
+                    <span>750</span>
+                    <span>900</span>
+                </div>
+                <div class="meter-colors">
+                    <span class="poor">Poor</span>
+                    <span class="average">Average</span>
+                    <span class="good">Good</span>
+                    <span class="excellent">Excellent</span>
+                </div>
+            </div>
+            <p class="meter-score">Your Score: <strong>{{ cibil_score }}</strong></p>
+        </div>
+
+        <!-- Decision Details -->
+        <div class="decision-card">
+            <h3>Loan Decision Details</h3>
+            <div class="applicant-info">
+                <p><strong>Applicant:</strong> {{ name }}</p>
+                <p><strong>Loan Amount:</strong> ₹{{ "%.2f"|format(loan|float) }}</p>
+                <p><strong>Monthly Income:</strong> ₹{{ "%.2f"|format(income|float) }}</p>
+                <p><strong>Tenure:</strong> {{ tenure }} years</p>
+                <p><strong>Interest Rate:</strong> {{ interest_rate }}%</p>
+            </div>
+
+            <div class="emi-comparison">
+                <h4>EMI Options by Tenure</h4>
+                <table class="emi-table">
+                    <thead>
+                        <tr>
+                            <th>Tenure</th>
+                            <th>Months</th>
+                            <th>Monthly EMI</th>
+                            <th>Total Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for option in emi_options %}
+                        <tr class="{% if option.years|string == tenure %}highlight{% endif %}">
+                            <td>{{ option.years }} years</td>
+                            <td>{{ option.months }}</td>
+                            <td>₹{{ "%.2f"|format(option.emi) }}</td>
+                            <td>₹{{ "%.2f"|format(option.emi * option.months) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="decision-reason">
+                <h4>Decision Reason</h4>
+                <p class="reason-text">{{ decision_reason }}</p>
+                {% if loan_type == 'education' and co_applicant_income %}
+                <p><strong>Note:</strong> Eligibility calculated using combined income of ₹{{ "%.2f"|format(income|float + co_applicant_income|float) }} (Applicant: ₹{{ "%.2f"|format(income|float) }}, Co-Applicant: ₹{{ "%.2f"|format(co_applicant_income|float) }}).</p>
+                {% endif %}
+            </div>
+
+            <div class="decision-actions">
+                <button class="primary-button" onclick="downloadReport()">📥 Download PDF Report</button>
+                <a href="/eligibility" class="secondary-button">🔄 New Assessment</a>
+            </div>
+        </div>
+
+        <!-- Recommendations -->
+        <div class="recommendations-card">
+            <h3>📈 Eligibility Recommendations</h3>
+            {% if 'Approved' in approval_status %}
+            <div class="recommendation approved">
+                <h4>✓ Loan Approved</h4>
+                <p>Congratulations! You are eligible for the loan. Proceed with standard documentation and verification process.</p>
+                <ul>
+                    <li>Prepare identity and income proof documents</li>
+                    <li>Arrange employment verification letter</li>
+                    <li>Submit bank statements for last 6 months</li>
+                    <li>Process typically completes within 5-7 business days</li>
+                </ul>
+            </div>
+            {% elif 'Conditional' in approval_status %}
+            <div class="recommendation conditional">
+                <h4>⚡ Conditional Approval</h4>
+                <p>Your application meets basic eligibility but requires additional verification. We may approve with more conservative terms.</p>
+                <ul>
+                    <li>Enhanced documentation may be required</li>
+                    <li>Consider reducing loan amount for faster approval</li>
+                    <li>Extend tenure to reduce monthly EMI burden</li>
+                    <li>Provide additional collateral if available</li>
+                </ul>
+            </div>
+            {% else %}
+            <div class="recommendation rejected">
+                <h4>✗ Not Eligible at This Time</h4>
+                <p>Your current profile does not meet our lending criteria. Consider these options to improve eligibility:</p>
+                <ul>
+                    <li>Improve your CIBIL score (take time, pay bills on time)</li>
+                    <li>Reduce the loan amount you're requesting</li>
+                    <li>Extend the loan tenure to reduce monthly EMI</li>
+                    <li>Increase monthly income or co-applicant income</li>
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</section>
+
+<!-- Modals -->
+<div id="cibilModal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeCIBILModal()">&times;</span>
+        <h2>Understanding CIBIL Scores</h2>
+        <div class="modal-body">
+            <div class="cibil-info-section">
+                <h4 style="color: #991b1b;">Poor (300-549)</h4>
+                <p>Indicates a history of payment delays or defaults. Loan approval is unlikely without significant collateral or guarantor.</p>
+            </div>
+            <div class="cibil-info-section">
+                <h4 style="color: #ea580c;">Average (550-649)</h4>
+                <p>Shows some credit risk. Approval may be possible but with higher interest rates and stricter conditions.</p>
+            </div>
+            <div class="cibil-info-section">
+                <h4 style="color: #059669;">Good (650-749)</h4>
+                <p>Indicates responsible credit management. Most lenders will approve loans at competitive rates.</p>
+            </div>
+            <div class="cibil-info-section">
+                <h4 style="color: #0369a1;">Excellent (750-900)</h4>
+                <p>Demonstrates excellent credit history. Access to best interest rates and loan products.</p>
+            </div>
+            
+            <h4 style="margin-top: 24px;">How to Improve Your CIBIL Score:</h4>
+            <ul>
+                <li>Pay all bills and EMIs on time</li>
+                <li>Keep credit utilization below 30% of limit</li>
+                <li>Don't apply for too many loans simultaneously</li>
+                <li>Maintain a mix of credit types (card, loan, etc.)</li>
+                <li>Regularly check your credit report for errors</li>
+                <li>Avoid defaulting on any payment obligations</li>
+            </ul>
+        </div>
+        <button class="primary-button" onclick="closeCIBILModal()" style="width: 100%; margin-top: 20px;">Close</button>
+    </div>
+</div>
+
+<div id="warningModal" class="modal">
+    <div class="modal-content warning">
+        <span class="modal-close" onclick="closeWarningModal()">&times;</span>
+        <h2>⚠️ Important Notice</h2>
+        <div class="modal-body">
+            <p id="warningMessage"></p>
+            <button class="primary-button" onclick="closeWarningModal()" style="width: 100%; margin-top: 20px;">Understood</button>
+        </div>
+    </div>
+</div>
+
+<div id="coApplicantModal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeCoApplicantModal()">&times;</span>
+        <h2>Co-Applicant Information</h2>
+        <div class="modal-body">
+            <p>For education loans, a co-applicant (usually a parent or guardian) is required to strengthen the application. Their income is considered along with the student's income for eligibility assessment.</p>
+            <h4>Why Co-Applicant?</h4>
+            <ul>
+                <li>Provides additional financial stability</li>
+                <li>Shares the repayment responsibility</li>
+                <li>Improves approval chances</li>
+                <li>Common requirement for student loans</li>
+            </ul>
+        </div>
+        <button class="primary-button" onclick="closeCoApplicantModal()" style="width: 100%; margin-top: 20px;">Close</button>
+    </div>
+</div>
+
+<script>
+function showCIBILInfo() {
+    document.getElementById('cibilModal').style.display = 'block';
+}
+
+function closeCIBILModal() {
+    document.getElementById('cibilModal').style.display = 'none';
+}
+
+function closeWarningModal() {
+    document.getElementById('warningModal').style.display = 'none';
+}
+
+function showCoApplicantInfo() {
+    document.getElementById('coApplicantModal').style.display = 'block';
+}
+
+function closeCoApplicantModal() {
+    document.getElementById('coApplicantModal').style.display = 'none';
+}
+
+function calculateLoan() {
+    const price = parseFloat(document.getElementById('vehicle_price').value) || 0;
+    const down = parseFloat(document.getElementById('down_payment').value) || 0;
+    const loan = Math.max(0, price - down);
+    document.getElementById('loan').value = loan.toFixed(2);
+}
+
+function downloadReport() {
+    const data = {
+        loan_type: '{{ loan_type }}',
+        name: '{{ name }}',
+        email: '{{ email }}',
+        phone: '{{ phone }}',
+        occupation: '{{ occupation }}',
+        location: '{{ location }}',
+        age: '{{ age }}',
+        income: '{{ income }}',
+        parent_name: '{{ parent_name }}',
+        parent_occupation: '{{ parent_occupation }}',
+        parent_income: '{{ parent_income }}',
+        parent_cibil: '{{ parent_cibil }}',
+        education_purpose: '{{ education_purpose }}',
+        vehicle_price: '{{ vehicle_price }}',
+        down_payment: '{{ down_payment }}',
+        vehicle_type: '{{ vehicle_type }}',
+        loan: '{{ loan }}',
+        interest_rate: '{{ interest_rate }}',
+        tenure: '{{ tenure }}',
+        emi: '{{ emi }}',
+        emi_ratio: '{{ emi_to_income_ratio }}',
+        cibil_score: '{{ cibil_score }}',
+        cibil_category: '{{ cibil_category }}',
+        approval_status: '{{ approval_status }}',
+        risk_level: '{{ risk_level }}',
+        decision_reason: '{{ decision_reason }}'
+    };
+    
+    fetch('/generate_report', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.blob())
+    .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `loan_eligibility_{{ name }}_{{ now }}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove();
+    })
+    .catch(error => {
+        alert('Error downloading report: ' + error);
+    });
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const cibilModal = document.getElementById('cibilModal');
+    const warningModal = document.getElementById('warningModal');
+    const coApplicantModal = document.getElementById('coApplicantModal');
+    if (event.target == cibilModal) {
+        cibilModal.style.display = 'none';
+    }
+    if (event.target == warningModal) {
+        warningModal.style.display = 'none';
+    }
+    if (event.target == coApplicantModal) {
+        coApplicantModal.style.display = 'none';
+    }
+}
+
+// Check for warnings
+document.addEventListener('DOMContentLoaded', function() {
+    {% if result and cibil_score|int < 650 %}
+    showLowCIBILWarning('{{ cibil_score }}');
+    {% endif %}
+    
+    {% if result and emi_to_income_ratio > 50 %}
+    showHighEMIWarning('{{ emi_to_income_ratio }}');
+    {% endif %}
+});
+
+function showLowCIBILWarning(score) {
+    document.getElementById('warningMessage').innerText = 
+        `Your CIBIL score is ${score}, which is below the excellent range. This may affect your loan approval terms. Consider improving your credit score before applying.`;
+    document.getElementById('warningModal').style.display = 'block';
+}
+
+function showHighEMIWarning(ratio) {
+    document.getElementById('warningMessage').innerText = 
+        `Your monthly EMI is ${ratio}% of your income, which is high. Consider requesting a lower loan amount or extending the tenure to reduce your monthly burden.`;
+    document.getElementById('warningModal').style.display = 'block';
+}
+</script>
+{% endblock %}

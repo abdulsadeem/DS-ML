@@ -1,0 +1,284 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Smart Lending Home{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-panel">
+    <div class="hero-copy">
+        <span class="eyebrow">Welcome to Smart Lending</span>
+        <h1>Your Instant Loan Eligibility Decision</h1>
+        <p>Get an AI-powered assessment of your loan eligibility in seconds. Simple form, instant decision, transparent process.</p>
+        <div class="hero-actions">
+            <a class="primary-button" href="/eligibility">✓ Check Eligibility Now</a>
+            <a class="secondary-button" href="/about">📚 Learn More</a>
+        </div>
+    </div>
+    <div class="hero-card">
+        <div class="hero-card-inner">
+            <h2>Smart Lending Advantage</h2>
+            <p>Leveraging AI and data science for fair, transparent credit decisions.</p>
+            <div class="feature-list">
+                <div>
+                    <strong>🚀 Instant Assessment</strong>
+                    <span>Get your decision in less than 60 seconds</span>
+                </div>
+                <div>
+                    <strong>📊 CIBIL + EMI Logic</strong>
+                    <span>Data-driven eligibility based on credit score and repayment capacity</span>
+                </div>
+                <div>
+                    <strong>📄 PDF Report</strong>
+                    <span>Download detailed eligibility report instantly</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Loan Type Cards Section -->
+<section class="loan-types-section">
+    <div class="section-header">
+        <h2>Our Loan Products</h2>
+        <p>Choose the loan type that best fits your needs</p>
+    </div>
+
+    <div class="loan-cards-grid">
+        <!-- Personal Loan Card -->
+        <div class="loan-card">
+            <div class="loan-card-header personal">
+                <div class="loan-icon">💼</div>
+                <h3>Personal Loan</h3>
+            </div>
+            <div class="loan-card-body">
+                <p class="loan-description">Flexible funds for any personal need – education, wedding, home renovation, or travel.</p>
+                <div class="loan-features">
+                    <div class="feature">
+                        <span class="feature-icon">⚡</span>
+                        <div>
+                            <strong>Quick Disbursal</strong>
+                            <span>24-48 hours</span>
+                        </div>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">💰</span>
+                        <div>
+                            <strong>Flexible Amount</strong>
+                            <span>₹1L - ₹50L</span>
+                        </div>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">📅</span>
+                        <div>
+                            <strong>Easy EMI</strong>
+                            <span>1 - 10 years</span>
+                        </div>
+                    </div>
+                </div>
+                <a href="/eligibility?type=personal" class="loan-card-button">Check Eligibility</a>
+            </div>
+        </div>
+
+        <!-- Home Loan Card -->
+        <div class="loan-card">
+            <div class="loan-card-header home">
+                <div class="loan-icon">🏠</div>
+                <h3>Home Loan</h3>
+            </div>
+            <div class="loan-card-body">
+                <p class="loan-description">Fulfill your dream of owning a home with our competitive home loan products.</p>
+                <div class="loan-features">
+                    <div class="feature">
+                        <span class="feature-icon">🏦</span>
+                        <div>
+                            <strong>Competitive Rates</strong>
+                            <span>From 6.5% p.a.</span>
+                        </div>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">💵</span>
+                        <div>
+                            <strong>High Loan Amount</strong>
+                            <span>Up to ₹1 Crore</span>
+                        </div>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">🎯</span>
+                        <div>
+                            <strong>Long Tenure</strong>
+                            <span>Up to 30 years</span>
+                        </div>
+                    </div>
+                </div>
+                <a href="/eligibility?type=home" class="loan-card-button">Check Eligibility</a>
+            </div>
+        </div>
+
+        <!-- Vehicle Loan Card -->
+        <div class="loan-card">
+            <div class="loan-card-header vehicle">
+                <div class="loan-icon">🚗</div>
+                <h3>Vehicle Loan</h3>
+            </div>
+            <div class="loan-card-body">
+                <p class="loan-description">Drive your dream car with our hassle-free vehicle loan solutions.</p>
+                <div class="loan-features">
+                    <div class="feature">
+                        <span class="feature-icon">⚙️</span>
+                        <div>
+                            <strong>New & Used</strong>
+                            <span>Both vehicles eligible</span>
+                        </div>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">🚀</span>
+                        <div>
+                            <strong>Fast Processing</strong>
+                            <span>Approval in 48 hours</span>
+                        </div>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">💳</span>
+                        <div>
+                            <strong>Low Interest Rates</strong>
+                            <span>Starting from 7%</span>
+                        </div>
+                    </div>
+                </div>
+                <a href="/eligibility?type=vehicle" class="loan-card-button">Check Eligibility</a>
+            </div>
+        </div>
+
+        <!-- Education Loan Card -->
+        <div class="loan-card">
+            <div class="loan-card-header education">
+                <div class="loan-icon">🎓</div>
+                <h3>Education Loan</h3>
+            </div>
+            <div class="loan-card-body">
+                <p class="loan-description">Invest in your future with our education loan supporting Indian and foreign studies.</p>
+                <div class="loan-features">
+                    <div class="feature">
+                        <span class="feature-icon">🌍</span>
+                        <div>
+                            <strong>Domestic & Abroad</strong>
+                            <span>Covers all courses</span>
+                        </div>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">👨‍👩‍👧</span>
+                        <div>
+                            <strong>Co-applicant Support</strong>
+                            <span>Parent or guardian</span>
+                        </div>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">⏸️</span>
+                        <div>
+                            <strong>Moratorium Period</strong>
+                            <span>EMI starts post-studies</span>
+                        </div>
+                    </div>
+                </div>
+                <a href="/eligibility?type=education" class="loan-card-button">Check Eligibility</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Why Choose Us Section -->
+<section class="why-choose-us">
+    <div class="section-header">
+        <h2>Why Choose Smart Lending?</h2>
+        <p>Experience transparent, data-driven lending</p>
+    </div>
+
+    <div class="benefits-grid">
+        <div class="benefit-item">
+            <div class="benefit-icon">⚡</div>
+            <h3>Instant Decision</h3>
+            <p>Get your eligibility decision in seconds using AI-powered assessment</p>
+        </div>
+
+        <div class="benefit-item">
+            <div class="benefit-icon">🎯</div>
+            <h3>Transparent Process</h3>
+            <p>Clear criteria: CIBIL score and EMI capacity. No hidden factors.</p>
+        </div>
+
+        <div class="benefit-item">
+            <div class="benefit-icon">📊</div>
+            <h3>Data-Driven</h3>
+            <p>Fair assessments based on actual creditworthiness and repayment capacity</p>
+        </div>
+
+        <div class="benefit-item">
+            <div class="benefit-icon">📄</div>
+            <h3>PDF Report</h3>
+            <p>Download detailed eligibility report with recommendations</p>
+        </div>
+
+        <div class="benefit-item">
+            <div class="benefit-icon">🔒</div>
+            <h3>Secure & Private</h3>
+            <p>Your data is encrypted and processed securely</p>
+        </div>
+
+        <div class="benefit-item">
+            <div class="benefit-icon">💡</div>
+            <h3>Smart Guidance</h3>
+            <p>Get actionable tips to improve your loan eligibility</p>
+        </div>
+    </div>
+</section>
+
+<!-- Eligibility Criteria Section -->
+<section class="eligibility-criteria">
+    <div class="section-header">
+        <h2>Understanding Our Eligibility Criteria</h2>
+        <p>Our AI-powered system uses CIBIL score and EMI capacity for decisions</p>
+    </div>
+
+    <div class="criteria-container">
+        <div class="criteria-box approved">
+            <div class="criteria-status">✓ Approved</div>
+            <h4>Low Risk Profile</h4>
+            <ul>
+                <li>CIBIL Score: ≥ 750</li>
+                <li>EMI Burden: ≤ 50% of monthly income</li>
+                <li>Decision: Loan Approved</li>
+            </ul>
+        </div>
+
+        <div class="criteria-box conditional">
+            <div class="criteria-status">⚡ Conditional</div>
+            <h4>Medium Risk Profile</h4>
+            <ul>
+                <li>CIBIL Score: 650-749</li>
+                <li>EMI Burden: ≤ 50% of monthly income</li>
+                <li>Decision: May Approve with verification</li>
+            </ul>
+        </div>
+
+        <div class="criteria-box rejected">
+            <div class="criteria-status">✗ Rejected</div>
+            <h4>High Risk Profile</h4>
+            <ul>
+                <li>CIBIL Score: < 650</li>
+                <li>EMI Burden: > 50% of monthly income</li>
+                <li>Decision: Not Eligible</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="cta-content">
+        <h2>Ready to Check Your Eligibility?</h2>
+        <p>It takes less than 2 minutes. Get instant results and download your report.</p>
+        <a href="/eligibility" class="primary-button large">Start Eligibility Check Now →</a>
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}History | Smart Lending{% endblock %}
+
+{% block content %}
+<section class="panel panel-glow">
+    <div class="panel-heading">
+        <span class="eyebrow">Loan History</span>
+        <h1>Application history</h1>
+        <p>Review the most recent submissions that include both personal profile and eligibility decisions.</p>
+    </div>
+
+    <div class="history-content">
+        {% if grouped_history %}
+            {% for group in grouped_history %}
+                <section class="history-group">
+                    <h2 class="history-group-title">{{ group.label }}</h2>
+                    <ul class="history-list">
+                        {% for entry in group.entries %}
+                        <li class="history-list-item">
+                            <div class="history-list-header">
+                                <div>
+                                    <span class="history-label">Applicant</span>
+                                    <span class="history-value">{{ entry.name }}</span>
+                                </div>
+                                <div>
+                                    <span class="history-label">Submitted</span>
+                                    <span class="history-value">{{ entry.timestamp }}</span>
+                                </div>
+                            </div>
+                            <div class="history-details">
+                                <div class="history-entry">
+                                    <span class="history-label">Loan Type</span>
+                                    <span class="history-value">{{ entry.loan_type.title() }}</span>
+                                </div>
+                                <div class="history-entry">
+                                    <span class="history-label">Occupation</span>
+                                    <span class="history-value">{{ entry.occupation }}</span>
+                                </div>
+                                <div class="history-entry">
+                                    <span class="history-label">Location</span>
+                                    <span class="history-value">{{ entry.location }}</span>
+                                </div>
+                                <div class="history-entry">
+                                    <span class="history-label">Loan</span>
+                                    <span class="history-value">₹{{ entry.loan }}</span>
+                                </div>
+                                <div class="history-entry">
+                                    <span class="history-label">Risk</span>
+                                    <span class="history-value">{{ entry.risk_level }}</span>
+                                </div>
+                                <div class="history-entry">
+                                    <span class="history-label">EMI</span>
+                                    <span class="history-value">₹{{ entry.emi }}</span>
+                                </div>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </section>
+            {% endfor %}
+        {% else %}
+        <article class="history-card">
+            <h3>No applications yet</h3>
+            <p>Submit your combined profile and eligibility form to populate history.</p>
+        </article>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

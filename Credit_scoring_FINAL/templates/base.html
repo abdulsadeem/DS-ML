@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Smart Lending System{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <script defer src="{{ url_for('static', filename='script.js') }}"></script>
+</head>
+<body class="{% block body_class %}{% endblock %}">
+    <div class="page-shell">
+        <header class="topbar">
+            <div class="brand">
+                <span class="brand-icon">💳</span>
+                <div>
+                    <span class="brand-name">Smart Lending</span>
+                    <span class="brand-tag">Optimization System</span>
+                </div>
+            </div>
+            <nav class="nav-links">
+                {% if session.get('logged_in') %}
+                <!-- Logged In Navigation -->
+                <a href="/" class="nav-item">Home</a>
+                <a href="/eligibility" class="nav-item">Eligibility</a>
+                <a href="/history" class="nav-item">History</a>
+                <a href="/admin" class="nav-item">Admin</a>
+                <a href="/about" class="nav-item">About</a>
+                <a href="/logout" class="nav-button logout-button">Logout</a>
+                {% else %}
+                <!-- Not Logged In Navigation -->
+                <a href="/login" class="nav-button login-button">Sign In</a>
+                <a href="/signup" class="nav-button signup-button">Sign Up</a>
+                {% endif %}
+            </nav>
+        </header>
+
+        <main class="page-content">
+            {% block content %}{% endblock %}
+        </main>
+
+        <footer class="footer">
+            <p>Designed for smarter credit decisions</p>
+        </footer>
+    </div>
+</body>
+</html>

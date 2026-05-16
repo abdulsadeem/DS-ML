@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Verification | Smart Lending{% endblock %}
+
+{% block content %}
+<section class="panel panel-glow">
+    <div class="panel-heading">
+        <h1>Admin Verification Panel</h1>
+        <p>Review and verify loan applications requiring additional checks.</p>
+    </div>
+
+    <div class="admin-content">
+        {% if pending_verifications %}
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Timestamp</th>
+                    <th>Loan Type</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in pending_verifications %}
+                <tr>
+                    <td>{{ item.id }}</td>
+                    <td>{{ item.timestamp }}</td>
+                    <td>{{ item.loan_type.title() }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.email }}</td>
+                    <td>{{ item.phone }}</td>
+                    <td>{{ item.approval_status }}</td>
+                    <td>
+                        <form method="post" action="{{ url_for('verify', submission_id=item.id) }}" style="display: inline;">
+                            <button type="submit" name="action" value="Approved" class="approve-btn">Approve</button>
+                            <button type="submit" name="action" value="Rejected" class="reject-btn">Reject</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <article class="admin-card">
+            <h3>No pending verifications</h3>
+            <p>All applications have been processed.</p>
+        </article>
+        {% endif %}
+    </div>
+</section>
+
+<style>
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.admin-table th, .admin-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.admin-table th {
+    background-color: #f2f2f2;
+}
+
+.approve-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.reject-btn {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+.approve-btn:hover {
+    background-color: #45a049;
+}
+
+.reject-btn:hover {
+    background-color: #da190b;
+}
+</style>
+{% endblock %}
