@@ -1,18 +1,5 @@
-# Jupyter checkpoints
-.ipynb_checkpoints/
-
-# Python cache
-__pycache__/
-
-# Word temp files
-~$*.docx
-
-# Generated reports
-# Ignore all generated report files
-reports/*.png
-reports/*.docx
-reports/~$*.docx
-
-# OS files
-.DS_Store
-Thumbs.db
+node_modules/ 
+.env 
+dist/ 
+build/ 
+.vscode/ 
